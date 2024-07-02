@@ -1,19 +1,25 @@
-class Task {
-    private static int nextId = 1;
-    private final int id;
+package tasks;
+
+public class Task {
+    private int id;
     private String title;
     private String description;
     private TaskStatus status;
 
     public Task(String title, String description, TaskStatus status) {
-        this.id = nextId++;
         this.title = title;
         this.description = description;
         this.status = status;
     }
 
+    // Геттеры и сеттеры
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

@@ -1,7 +1,9 @@
+package tasks;
+
 import java.util.ArrayList;
 import java.util.List;
 
-class Epic extends Task {
+public class Epic extends Task {
     private final List<Integer> subtaskIds;
 
     public Epic(String title, String description, TaskStatus status) {
