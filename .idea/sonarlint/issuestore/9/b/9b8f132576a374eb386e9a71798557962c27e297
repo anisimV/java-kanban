@@ -1,11 +1,0 @@
-
-0
-java:S1220""Move this file to a named package.
-]
-java:S6201"BReplace this instanceof check and cast with 'instanceof Epic epic'(ÊôÃ ùÿÿÿÿ
-c
-java:S6201"HReplace this instanceof check and cast with 'instanceof Subtask subtask'(‚ü¹†ýÿÿÿÿ
-c
-java:S6201"HReplace this instanceof check and cast with 'instanceof Subtask subtask'(‚ü¹†ýÿÿÿÿ
-]
-java:S62010"BReplace this instanceof check and cast with 'instanceof Epic epic'(ÊôÃ ùÿÿÿÿ

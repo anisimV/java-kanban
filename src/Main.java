@@ -76,5 +76,11 @@ public class Main {
         for (Task task : taskManager.getAllTasks()) {
             System.out.println(task);
         }
+
+        // Выводим эпики после удаления
+        System.out.println("\nЭпики после удаления:");
+        for (Epic epic : taskManager.getAllEpics()) {
+            System.out.println(epic);
+        }
     }
 }
