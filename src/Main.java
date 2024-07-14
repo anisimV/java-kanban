@@ -1,9 +1,9 @@
-import manager.TaskManager;
+import manager.*;
 import tasks.*;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         // Создаем задачи, эпики, подзадачи
         Task task1 = new Task("Проверка функционала", "Проверить основные функции приложения", TaskStatus.NEW);
@@ -33,54 +33,35 @@ public class Main {
         taskManager.createSubtask(subtask2);
         taskManager.createSubtask(subtask3);
 
-        // Выводим все задачи, эпики и подзадачи
-        System.out.println("Все задачи:");
-        for (Task task : taskManager.getAllTasks()) {
-            System.out.println(task);
+        // Получаем задачи, эпики и подзадачи, чтобы обновить историю
+        taskManager.getTask(task1.getId());
+        taskManager.getTask(task2.getId());
+        taskManager.getEpic(epic1.getId());
+        taskManager.getEpic(epic2.getId());
+        taskManager.getSubtask(subtask1.getId());
+        taskManager.getSubtask(subtask2.getId());
+        taskManager.getSubtask(subtask3.getId());
+
+        // Выводим историю просмотров
+        System.out.println("\nИстория просмотров:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task.getTitle());
         }
 
-        System.out.println("\nВсе эпики:");
-        for (Epic epic : taskManager.getAllEpics()) {
-            System.out.println(epic);
-        }
-
-        System.out.println("\nВсе подзадачи:");
-        for (Subtask subtask : taskManager.getAllSubtasks()) {
-            System.out.println(subtask);
-        }
-
-        // Обновляем статусы задач и эпиков
-        task1.setStatus(TaskStatus.DONE);
-        taskManager.updateTask(task1);
-
-        subtask1.setStatus(TaskStatus.DONE);
-        subtask2.setStatus(TaskStatus.IN_PROGRESS);
-        subtask3.setStatus(TaskStatus.DONE);
-
-        taskManager.updateSubtask(subtask1);
-        taskManager.updateSubtask(subtask2);
-        taskManager.updateSubtask(subtask3);
-
-        // Выводим обновленные задачи и эпики
-        System.out.println("\nОбновленные задачи и эпики:");
-        for (Task task : taskManager.getAllTasks()) {
-            System.out.println(task);
-        }
-
-        // Удаляем задачи
+        // Удаляем задачи и эпики
         taskManager.deleteTaskById(task1.getId());
         taskManager.deleteEpicById(epic1.getId());
 
-        // Выводим задачи после удаления
-        System.out.println("\nЗадачи после удаления:");
-        for (Task task : taskManager.getAllTasks()) {
-            System.out.println(task);
-        }
+        // Повторно получаем задачи и эпики, чтобы обновить историю
+        taskManager.getTask(task2.getId());
+        taskManager.getEpic(epic2.getId());
 
-        // Выводим эпики после удаления
-        System.out.println("\nЭпики после удаления:");
-        for (Epic epic : taskManager.getAllEpics()) {
-            System.out.println(epic);
+        // Выводим обновленную историю просмотров
+        System.out.println("\nОбновленная история просмотров:");
+        for (Task task : taskManager.getHistory()) {
+            System.out.println(task.getTitle());
         }
     }
 }
+
+
