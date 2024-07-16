@@ -13,7 +13,6 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private final List<Task> recentlyViewedTasks = new ArrayList<>();
 
     @Override
     public void createTask(Task task) {
@@ -43,9 +42,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTask(int id) {
         Task task = tasks.get(id);
-        if (task != null && !recentlyViewedTasks.contains(task)) {
-            recentlyViewedTasks.add(task);
-            updateHistory(task);
+        if (task != null) {
+            historyManager.add(task);
         }
         return task;
     }
@@ -53,9 +51,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpic(int id) {
         Epic epic = epics.get(id);
-        if (epic != null && !recentlyViewedTasks.contains(epic)) {
-            recentlyViewedTasks.add(epic);
-            updateHistory(epic);
+        if (epic != null) {
+            historyManager.add(epic);
         }
         return epic;
     }
@@ -63,16 +60,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = subtasks.get(id);
-        if (subtask != null && !recentlyViewedTasks.contains(subtask)) {
-            recentlyViewedTasks.add(subtask);
-            updateHistory(subtask);
+        if (subtask != null) {
+            historyManager.add(subtask);
         }
         return subtask;
     }
 
     @Override
     public List<Task> getHistory() {
-        return new ArrayList<>(recentlyViewedTasks);
+        return historyManager.getHistory();
     }
 
     @Override
@@ -194,12 +190,5 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             epic.setStatus(TaskStatus.IN_PROGRESS);
         }
-    }
-
-    private void updateHistory(Task task) {
-        if (recentlyViewedTasks.size() > 10) {
-            recentlyViewedTasks.remove(0);
-        }
-        historyManager.add(task);
     }
 }
