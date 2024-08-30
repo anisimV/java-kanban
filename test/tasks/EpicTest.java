@@ -1,13 +1,10 @@
 package tasks;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.Test;
 import manager.InMemoryTaskManager;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.TaskStatus;
+import org.junit.jupiter.api.function.Executable;
 
 public class EpicTest {
 
@@ -19,12 +16,7 @@ public class EpicTest {
 
         Subtask subtask = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.NEW, 1);
 
-        Executable executable = new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                taskManager.createSubtask(subtask);
-            }
-        };
+        Executable executable = () -> taskManager.createSubtask(subtask);
 
         assertThrows(IllegalArgumentException.class, executable);
     }
