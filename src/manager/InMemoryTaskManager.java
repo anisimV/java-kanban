@@ -125,10 +125,11 @@ public class InMemoryTaskManager implements TaskManager {
             if (epic != null) {
                 epic.getSubtaskIds().remove(Integer.valueOf(id));
                 updateEpicStatus(epic);
-                historyManager.remove(id);
             }
+            historyManager.remove(id); // Удаляем подзадачу из истории
         }
     }
+
 
     @Override
     public List<Task> getAllTasks() {
@@ -167,11 +168,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllSubtasks() {
-        subtasks.clear();
-        for (Epic epic : epics.values()) {
-            epic.getSubtaskIds().clear();
+        List<Integer> subtasksToRemove = new ArrayList<>(subtasks.keySet());
+        for (int subtaskId : subtasksToRemove) {
+            deleteSubtaskById(subtaskId);
         }
     }
+
 
     private void updateEpicStatus(Epic epic) {
         List<Subtask> subtasksForEpic = getAllSubtasksForEpic(epic);

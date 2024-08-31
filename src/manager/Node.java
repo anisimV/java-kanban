@@ -1,13 +1,11 @@
 package manager;
 
-import tasks.Task;
+public class Node<T> {
+    T item;
+    Node<T> prev;
+    Node<T> next;
 
-public class Node {
-    Task task;
-    Node prev;
-    Node next;
-
-    public Node(Task task) {
-        this.task = task;
+    public Node(T item) {
+        this.item = item;
     }
 }

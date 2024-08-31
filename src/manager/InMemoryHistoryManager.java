@@ -1,16 +1,15 @@
 package manager;
 
 import tasks.Task;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final Map<Integer, Node> taskNodeMap = new HashMap<>();
-    private Node head;
-    private Node tail;
+    private final Map<Integer, Node<Task>> taskNodeMap = new HashMap<>();
+    private Node<Task> head;
+    private Node<Task> tail;
 
     @Override
     public void add(Task task) {
@@ -18,14 +17,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             removeNode(taskNodeMap.get(task.getId()));
         }
 
-        Node newNode = new Node(task);
+        Node<Task> newNode = new Node<>(task);
         linkLast(newNode);
         taskNodeMap.put(task.getId(), newNode);
     }
 
     @Override
     public void remove(int id) {
-        Node nodeToRemove = taskNodeMap.remove(id);
+        Node<Task> nodeToRemove = taskNodeMap.remove(id);
         if (nodeToRemove != null) {
             removeNode(nodeToRemove);
         }
@@ -36,7 +35,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTasks();
     }
 
-    private void linkLast(Node node) {
+    private void linkLast(Node<Task> node) {
         if (tail == null) {
             head = tail = node;
         } else {
@@ -46,7 +45,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    private void removeNode(Node node) {
+    private void removeNode(Node<Task> node) {
         if (node.prev != null) {
             node.prev.next = node.next;
         } else {
@@ -61,9 +60,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private List<Task> getTasks() {
         List<Task> tasks = new ArrayList<>();
-        Node current = head;
+        Node<Task> current = head;
         while (current != null) {
-            tasks.add(current.task);
+            tasks.add(current.item);
             current = current.next;
         }
         return tasks;
