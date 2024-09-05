@@ -33,3 +33,6 @@ K
 test/tasks/SubtaskTest.java,6\1\616980f6b312c9716f3b6e9682a7f43a32321aa3
 H
 test/tasks/TaskTest.java,6\2\62bbd125811b7b2ad6d7d4c6659712183ff9d78f
+:
+
+.gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
