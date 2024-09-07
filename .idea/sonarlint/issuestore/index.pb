@@ -19,8 +19,6 @@ C
 src/tasks/Task.java,3\2\3274c13c802fdd4f4c0bd72afbb851f447e32183
 I
 src/tasks/TaskStatus.java,6\a\6a8fdf9cab4dd4b1b0dd4f892822dc7f3940d15f
-E
-src/manager/Node.java,5\7\5779fb773f34f67fcc80d86d1ea96846485b8e33
 H
 test/tasks/EpicTest.java,3\2\325a2526977414f84035be29d6d65a61e068a431
 \
