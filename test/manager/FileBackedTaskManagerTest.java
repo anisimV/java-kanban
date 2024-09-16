@@ -1,6 +1,7 @@
 package manager;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
@@ -25,6 +26,7 @@ class FileBackedTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Загрузить пустой файл")
     void shouldSaveAndLoadEmptyFile() throws IOException {
         manager = FileBackedTaskManager.loadFromFile(tempFile);
         assertTrue(manager.getAllTasks().isEmpty(), "Список задач должен быть пустым");
@@ -33,15 +35,16 @@ class FileBackedTaskManagerTest {
     }
 
     @Test
+    @DisplayName("Сохранить и загрузить несколько задач")
     void shouldSaveAndLoadMultipleTasks() throws IOException {
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        manager.createTask(task1); // Добавляем задачу в менеджер, чтобы присвоить ей ID
+        manager.createTask(task1);
 
         Epic epic1 = new Epic("Epic 1", "Description 1", TaskStatus.NEW);
-        manager.createEpic(epic1); // Создаём эпик, чтобы у него появился ID
+        manager.createEpic(epic1);
 
         Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic1.getId());
-        manager.createSubtask(subtask1); // Создаём подзадачу с корректным ID эпика
+        manager.createSubtask(subtask1);
 
         List<String> lines = Files.readAllLines(tempFile.toPath());
         assertEquals(4, lines.size(), "Файл должен содержать 4 строки: заголовок и 3 задачи");
@@ -63,18 +66,18 @@ class FileBackedTaskManagerTest {
         assertEquals(epic1.getId(), loadedSubtasks.get(0).getEpicId(), "ID эпика в подзадаче должен совпадать");
     }
 
-
     @Test
+    @DisplayName("Загрузить несколько задач из файла")
     void shouldLoadMultipleTasksFromFile() throws IOException {
         // Создаём задачи
         Task task1 = new Task("Task 1", "Description 1", TaskStatus.NEW);
-        manager.createTask(task1); // Добавляем задачу в менеджер, чтобы присвоить ей ID
+        manager.createTask(task1);
 
         Epic epic1 = new Epic("Epic 1", "Description 1", TaskStatus.NEW);
-        manager.createEpic(epic1); // Создаём эпик, чтобы получить его ID
+        manager.createEpic(epic1);
 
         Subtask subtask1 = new Subtask("Subtask 1", "Description 1", TaskStatus.NEW, epic1.getId());
-        manager.createSubtask(subtask1); // Создаём подзадачу с корректным ID эпика
+        manager.createSubtask(subtask1);
 
         FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempFile);
 

@@ -28,17 +28,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 writer.write(taskToString(subtask) + "\n");
             }
         } catch (IOException e) {
-            throw new ManagerSaveException("Failed to save to file", e);
-        }
-    }
-
-    private String getTaskType(Task task) {
-        if (task instanceof Subtask) {
-            return "SUBTASK";
-        } else if (task instanceof Epic) {
-            return "EPIC";
-        } else {
-            return "TASK";
+            throw new ManagerSaveException("Не удалось сохранить в файл", e);
         }
     }
 
@@ -96,6 +86,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         save();
     }
 
+    @Override
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
+        save();
+    }
+
+    @Override
+    public void deleteAllEpics() {
+        super.deleteAllEpics();
+        save();
+    }
+
+    @Override
+    public void deleteAllSubtasks() {
+        super.deleteAllSubtasks();
+        save();
+    }
+
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
         try {
@@ -112,7 +120,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     }
                 }
             }
-
         } catch (IOException e) {
             throw new ManagerSaveException("Не удалось загрузить из файла", e);
         }
@@ -140,20 +147,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private static Task fromString(String value) {
         String[] fields = value.split(",");
         int id = Integer.parseInt(fields[0]);
-        String type = fields[1];
+        TaskType type = TaskType.valueOf(fields[1]);
         String title = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
         switch (type) {
-            case "TASK":
+            case TASK:
                 return new Task(title, description, status);
-            case "EPIC":
+            case EPIC:
                 return new Epic(title, description, status);
-            case "SUBTASK":
+            case SUBTASK:
                 int epicId = Integer.parseInt(fields[5]);
                 return new Subtask(title, description, status, epicId);
             default:
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
+    }
+
+    private String getTaskType(Task task) {
+        return task.getType().name();
     }
 }
