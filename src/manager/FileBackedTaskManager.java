@@ -2,6 +2,8 @@ package manager;
 
 import tasks.*;
 import exceptions.ManagerSaveException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,9 +17,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.file = file;
     }
 
-    private void save() {
+    protected void save() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,epic,duration,startTime,endTime\n");
             for (Task task : getAllTasks()) {
                 writer.write(taskToString(task) + "\n");
             }
@@ -127,11 +129,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String taskToString(Task task) {
-        String epicId;
+        String epicId = "";
         if (task instanceof Subtask) {
             epicId = String.valueOf(((Subtask) task).getEpicId());
-        } else {
-            epicId = "";
         }
 
         String id = String.valueOf(task.getId());
@@ -139,26 +139,44 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         String title = task.getTitle();
         String status = task.getStatus().toString();
         String description = task.getDescription();
+        String duration = task.getDuration().toMinutes() + "";
+        String startTime = task.getStartTime() != null ? task.getStartTime().toString() : "";
+        String endTime = task.getEndTime() != null ? task.getEndTime().toString() : "";
 
-        String result = id + "," + taskType + "," + title + "," + status + "," + description + "," + epicId;
-        return result;
+        return String.join(",", id, taskType, title, status, description, epicId, duration, startTime, endTime);
     }
+
 
     private static Task fromString(String value) {
         String[] fields = value.split(",");
+        if (fields.length < 7) {
+            throw new IllegalArgumentException("Недостаточно полей в строке: " + value);
+        }
+
         int id = Integer.parseInt(fields[0]);
         TaskType type = TaskType.valueOf(fields[1]);
         String title = fields[2];
         TaskStatus status = TaskStatus.valueOf(fields[3]);
         String description = fields[4];
+
+        Duration duration = Duration.ofMinutes(Long.parseLong(fields[6]));
+        LocalDateTime startTime = fields[7].isEmpty() ? null : LocalDateTime.parse(fields[7]);
+        LocalDateTime endTime = fields[8].isEmpty() ? null : LocalDateTime.parse(fields[8]);
+
         switch (type) {
             case TASK:
-                return new Task(title, description, status);
+                Task task = new Task(title, description, status, duration, startTime);
+                task.setId(id);
+                return task;
             case EPIC:
-                return new Epic(title, description, status);
+                Epic epic = new Epic(title, description, status);
+                epic.setId(id);
+                return epic;
             case SUBTASK:
                 int epicId = Integer.parseInt(fields[5]);
-                return new Subtask(title, description, status, epicId);
+                Subtask subtask = new Subtask(title, description, status, epicId, duration, startTime);
+                subtask.setId(id);
+                return subtask;
             default:
                 throw new IllegalArgumentException("Неизвестный тип задачи: " + type);
         }
