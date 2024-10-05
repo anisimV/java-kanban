@@ -34,13 +34,19 @@ public class EpicTest {
         epic.setId(1);
         taskManager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusMinutes(15));
+        LocalDateTime now = LocalDateTime.now();
+
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), now);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), now.plusMinutes(31));
+        Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), now.plusMinutes(62));
+
         subtask1.setId(2);
         subtask2.setId(3);
+        subtask3.setId(4);
 
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
+        taskManager.createSubtask(subtask3);
 
         TaskStatus epicStatus = taskManager.getEpic(epic.getId()).getStatus();
 
@@ -55,8 +61,10 @@ public class EpicTest {
         epic.setId(1);
         taskManager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusMinutes(15));
+        LocalDateTime now = LocalDateTime.now();
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(30), now);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(45), now.plusMinutes(31));
+
         subtask1.setId(2);
         subtask2.setId(3);
 
@@ -68,6 +76,7 @@ public class EpicTest {
         assertEquals(TaskStatus.DONE, epicStatus);
     }
 
+
     @Test
     @DisplayName("Эпик должен иметь статус IN_PROGRESS, если подзадачи имеют смешанные статусы NEW и DONE")
     void testEpicStatusNewAndDoneSubtasks() {
@@ -76,8 +85,9 @@ public class EpicTest {
         epic.setId(1);
         taskManager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusMinutes(15));
+        LocalDateTime now = LocalDateTime.now();
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), now);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(30), now.plusMinutes(31));
 
         subtask1.setId(2);
         subtask2.setId(3);
@@ -98,14 +108,19 @@ public class EpicTest {
         epic.setId(1);
         taskManager.createEpic(epic);
 
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.IN_PROGRESS, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.IN_PROGRESS, epic.getId(), Duration.ofMinutes(45), LocalDateTime.now().plusMinutes(15));
+        LocalDateTime now = LocalDateTime.now();
+
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание подзадачи 1", TaskStatus.IN_PROGRESS, epic.getId(), Duration.ofMinutes(30), now);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание подзадачи 2", TaskStatus.IN_PROGRESS, epic.getId(), Duration.ofMinutes(30), now.plusMinutes(31));
+        Subtask subtask3 = new Subtask("Подзадача 3", "Описание подзадачи 3", TaskStatus.IN_PROGRESS, epic.getId(), Duration.ofMinutes(30), now.plusMinutes(62));
 
         subtask1.setId(2);
         subtask2.setId(3);
+        subtask3.setId(4);
 
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
+        taskManager.createSubtask(subtask3);
 
         TaskStatus epicStatus = taskManager.getEpic(epic.getId()).getStatus();
 

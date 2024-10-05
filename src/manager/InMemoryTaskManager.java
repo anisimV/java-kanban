@@ -17,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
 
     @Override
     public void createTask(Task task) {
@@ -37,13 +37,15 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask subtask) {
         validateTaskTime(subtask);
         subtask.setId(nextId++);
+
         if (epics.containsKey(subtask.getEpicId())) {
             subtasks.put(subtask.getId(), subtask);
-            prioritizedTasks.add(subtask);
             Epic epic = epics.get(subtask.getEpicId());
             epic.addSubtaskId(subtask.getId());
             updateEpicStatus(epic);
             updateEpicTime(epic);
+
+            prioritizedTasks.add(subtask);
         } else {
             throw new IllegalArgumentException("Эпик с id " + subtask.getEpicId() + " не существует.");
         }
@@ -95,11 +97,12 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic updatedEpic) {
         if (epics.containsKey(updatedEpic.getId())) {
             Epic existingEpic = epics.get(updatedEpic.getId());
+            prioritizedTasks.remove(existingEpic);
+
             existingEpic.setTitle(updatedEpic.getTitle());
             existingEpic.setDescription(updatedEpic.getDescription());
 
-            prioritizedTasks.remove(existingEpic);
-
+            updateEpicStatus(existingEpic);
             updateEpicTime(existingEpic);
 
             prioritizedTasks.add(existingEpic);
@@ -110,14 +113,13 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask updatedSubtask) {
         validateTaskTime(updatedSubtask);
         if (subtasks.containsKey(updatedSubtask.getId())) {
+            Subtask subtask = subtasks.get(updatedSubtask.getId());
             subtasks.put(updatedSubtask.getId(), updatedSubtask);
-            Epic epic = epics.get(updatedSubtask.getEpicId());
-            if (epic != null) {
-                updateEpicStatus(epic);
-                updateEpicTime(epic);
-            }
+            Epic epic = epics.get(subtask.getEpicId());
+            updateEpicStatus(epic);
+            updateEpicTime(epic);
         } else {
-            throw new IllegalArgumentException("Подзадача с id " + updatedSubtask.getId() + " не существует.");
+            throw new IllegalArgumentException("Эпик с id " + updatedSubtask.getEpicId() + " не существует.");
         }
     }
 
