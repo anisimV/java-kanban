@@ -110,13 +110,14 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateSubtask(Subtask updatedSubtask) {
         validateTaskTime(updatedSubtask);
         if (subtasks.containsKey(updatedSubtask.getId())) {
-            Subtask subtask = subtasks.get(updatedSubtask.getId());
             subtasks.put(updatedSubtask.getId(), updatedSubtask);
-            Epic epic = epics.get(subtask.getEpicId());
-            updateEpicStatus(epic);
-            updateEpicTime(epic);
+            Epic epic = epics.get(updatedSubtask.getEpicId());
+            if (epic != null) {
+                updateEpicStatus(epic);
+                updateEpicTime(epic);
+            }
         } else {
-            throw new IllegalArgumentException("Эпик с id " + updatedSubtask.getEpicId() + " не существует.");
+            throw new IllegalArgumentException("Подзадача с id " + updatedSubtask.getId() + " не существует.");
         }
     }
 
