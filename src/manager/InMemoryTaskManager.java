@@ -17,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final Map<Integer, Epic> epics = new HashMap<>();
     private final Map<Integer, Subtask> subtasks = new HashMap<>();
     private final HistoryManager historyManager = Managers.getDefaultHistory();
-    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    private final TreeSet<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime, Comparator.nullsLast(Comparator.naturalOrder())));
 
     @Override
     public void createTask(Task task) {
@@ -37,12 +37,15 @@ public class InMemoryTaskManager implements TaskManager {
     public void createSubtask(Subtask subtask) {
         validateTaskTime(subtask);
         subtask.setId(nextId++);
+
         if (epics.containsKey(subtask.getEpicId())) {
             subtasks.put(subtask.getId(), subtask);
             Epic epic = epics.get(subtask.getEpicId());
             epic.addSubtaskId(subtask.getId());
             updateEpicStatus(epic);
             updateEpicTime(epic);
+
+            prioritizedTasks.add(subtask);
         } else {
             throw new IllegalArgumentException("Эпик с id " + subtask.getEpicId() + " не существует.");
         }
@@ -94,9 +97,15 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic updatedEpic) {
         if (epics.containsKey(updatedEpic.getId())) {
             Epic existingEpic = epics.get(updatedEpic.getId());
+            prioritizedTasks.remove(existingEpic);
+
             existingEpic.setTitle(updatedEpic.getTitle());
             existingEpic.setDescription(updatedEpic.getDescription());
+
+            updateEpicStatus(existingEpic);
             updateEpicTime(existingEpic);
+
+            prioritizedTasks.add(existingEpic);
         }
     }
 

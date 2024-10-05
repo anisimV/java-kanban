@@ -76,15 +76,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     @DisplayName("Тест вычисления статуса эпика")
     void testEpicStatusCalculation() {
+
         Epic epic = new Epic("Эпик 1", "Описание", TaskStatus.NEW);
         taskManager.createEpic(epic);
-        Subtask subtask1 = new Subtask("Подзадача 1", "Описание", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
-        Subtask subtask2 = new Subtask("Подзадача 2", "Описание", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(30), LocalDateTime.now());
+
+        LocalDateTime now = LocalDateTime.now();
+        Subtask subtask1 = new Subtask("Подзадача 1", "Описание", TaskStatus.NEW, epic.getId(), Duration.ofMinutes(30), now);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Описание", TaskStatus.DONE, epic.getId(), Duration.ofMinutes(30), now.plusMinutes(30));
 
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
 
         Epic updatedEpic = taskManager.getEpic(epic.getId());
+
         assertEquals(TaskStatus.IN_PROGRESS, updatedEpic.getStatus(), "Статус эпика должен быть IN_PROGRESS.");
     }
 
