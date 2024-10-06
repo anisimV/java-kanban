@@ -3,19 +3,31 @@ package tasks;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import tasks.Task;
-import tasks.TaskStatus;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.DisplayName;
 
 public class TaskTest {
 
     @Test
+    @DisplayName("Тест на проверку равенства задачи по id")
     void taskEqualityById() {
-        Task task1 = new Task("Задача 1", "Описание 1", TaskStatus.NEW);
-        Task task2 = new Task("Задача 2", "Описание 2", TaskStatus.IN_PROGRESS);
+        LocalDateTime startTime = LocalDateTime.now();
+        Duration duration = Duration.ofMinutes(60);
 
-        task1.setId(1);
-        task2.setId(1);
+        Task task = new Task("Задача", "Описание", TaskStatus.NEW, duration, startTime);
+        task.setId(1);
 
-        assertEquals(task1.getId(), task2.getId(), "Задачи не равны по id.");
+        assertEquals(task.getId(), task.getId(), "Задача не равна сама себе.");
+
+        Task sameIdTask = new Task("Другая задача", "Описание", TaskStatus.NEW, duration, startTime);
+        sameIdTask.setId(1);
+
+        assertEquals(sameIdTask.getId(), task.getId(), "Задачи с одинаковыми id не равны.");
+
+        Task differentIdTask = new Task("Задача", "Описание", TaskStatus.NEW, duration, startTime);
+        differentIdTask.setId(2);
+
+        assertNotEquals(differentIdTask.getId(), task.getId(), "Задачи с разными id должны быть не равны.");
     }
 }

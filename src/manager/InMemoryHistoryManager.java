@@ -14,7 +14,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        removeNode(taskNodeMap.get(task.getId()));  // Условие проверки больше не требуется
+        removeNode(taskNodeMap.get(task.getId()));
         Node<Task> newNode = new Node<>(task);
         linkLast(newNode);
         taskNodeMap.put(task.getId(), newNode);
